@@ -1,14 +1,15 @@
-package mnemosine.dto.group;
+package mnemosine.dto.account;
 
-public class ResourceGroupListRequestDTO {
-    public ResourceGroupListRequestDTO(String clientId, String tenantId, String secret, String subscriptionId) {
+public class StorageAccountListRequestDTO {
+    public StorageAccountListRequestDTO(String clientId, String tenantId, String secret, String subscriptionId, String groupName) {
         this.clientId = clientId;
         this.tenantId = tenantId;
         this.secret = secret;
         this.subscriptionId = subscriptionId;
+        this.groupName = groupName;
     }
 
-    public ResourceGroupListRequestDTO() {
+    public StorageAccountListRequestDTO() {
     }
 
     public String getClientId() {
@@ -43,8 +44,17 @@ public class ResourceGroupListRequestDTO {
         this.subscriptionId = subscriptionId;
     }
 
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
     private String clientId;
     private String tenantId;
     private String secret;
     private String subscriptionId;
+    private String groupName;
 }

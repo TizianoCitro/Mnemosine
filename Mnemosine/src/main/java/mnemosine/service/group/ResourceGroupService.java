@@ -1,5 +1,7 @@
-package mnemosine.service;
+package mnemosine.service.group;
 
+import com.microsoft.azure.management.Azure;
+import com.microsoft.azure.management.resources.ResourceGroup;
 import mnemosine.dto.MnemosineDTO;
 import mnemosine.dto.group.ResourceGroupCreateDTO;
 import mnemosine.dto.group.ResourceGroupCreateRequestDTO;
@@ -15,4 +17,6 @@ public interface ResourceGroupService {
     public MnemosineDTO<ResourceGroupDeleteDTO> delete(ResourceGroupDeleteRequestDTO requestDTO);
     public MnemosineDTO<ResourceGroupListDTO> listGroups(ResourceGroupListRequestDTO requestDTO);
     public MnemosineDTO<ResourceGroupInfoDTO> groupInfo(ResourceGroupInfoRequestDTO requestDTO);
+
+    public ResourceGroup getResourceGroup(Azure azure, String groupName);
 }

@@ -1,4 +1,4 @@
-package mnemosine.service;
+package mnemosine.service.group;
 
 import com.microsoft.azure.management.Azure;
 import com.microsoft.azure.management.resources.ResourceGroup;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ResourceGroupServiceImpl implements ResourceGroupService {
+
     @Override
     public MnemosineDTO<ResourceGroupCreateDTO> create(ResourceGroupCreateRequestDTO requestDTO) {
         // Build the response
@@ -81,9 +82,8 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
                         requestDTO.getSecret()),
                 requestDTO.getSubscriptionId());
 
-        for (ResourceGroup group: azure.resourceGroups().list()) {
+        for (ResourceGroup group: azure.resourceGroups().list())
             resourceGroupListDTO.addGroupName(group.name());
-        }
 
         return mnemosineDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
                 .setData(resourceGroupListDTO);
@@ -112,5 +112,13 @@ public class ResourceGroupServiceImpl implements ResourceGroupService {
                         resourceGroupByName.id(),
                         resourceGroupByName.name(),
                         resourceGroupByName.regionName()));
+    }
+
+    @Override
+    public ResourceGroup getResourceGroup(Azure azure, String groupName) {
+        return azure.resourceGroups()
+                .define(groupName)
+                .withRegion(Region.EUROPE_WEST)
+                .create();
     }
 }
