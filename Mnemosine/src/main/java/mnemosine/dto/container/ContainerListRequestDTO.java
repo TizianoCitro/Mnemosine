@@ -1,7 +1,7 @@
-package mnemosine.dto.account;
+package mnemosine.dto.container;
 
-public class StorageAccountInfoRequestDTO {
-    public StorageAccountInfoRequestDTO(String clientId, String tenantId, String secret, String subscriptionId, String groupName, String accountName) {
+public class ContainerListRequestDTO {
+    public ContainerListRequestDTO(String clientId, String tenantId, String secret, String subscriptionId, String groupName, String accountName) {
         this.clientId = clientId;
         this.tenantId = tenantId;
         this.secret = secret;
@@ -10,7 +10,7 @@ public class StorageAccountInfoRequestDTO {
         this.accountName = accountName;
     }
 
-    public StorageAccountInfoRequestDTO() {
+    public ContainerListRequestDTO() {
     }
 
     public String getClientId() {

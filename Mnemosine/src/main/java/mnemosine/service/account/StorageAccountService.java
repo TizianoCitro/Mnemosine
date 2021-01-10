@@ -1,5 +1,7 @@
 package mnemosine.service.account;
 
+import com.microsoft.azure.management.Azure;
+import com.microsoft.azure.management.storage.StorageAccount;
 import mnemosine.dto.MnemosineDTO;
 import mnemosine.dto.account.StorageAccountCreateDTO;
 import mnemosine.dto.account.StorageAccountCreateRequestDTO;
@@ -16,4 +18,7 @@ public interface StorageAccountService {
     public MnemosineDTO<StorageAccountListDTO> listAccounts(StorageAccountListRequestDTO requestDTO);
     public MnemosineDTO<StorageAccountListDTO> listAccountsByResourceGroup(StorageAccountListRequestDTO requestDTO);
     public MnemosineDTO<StorageAccountInfoDTO> accountInfo(StorageAccountInfoRequestDTO requestDTO);
+
+    public StorageAccount getStorageAccount(Azure azure, String groupName, String accountName);
+    public String buildConnectionString(StorageAccount storageAccount);
 }

@@ -8,14 +8,12 @@ import com.microsoft.azure.management.storage.StorageAccountSkuType;
 import mnemosine.dto.MnemosineDTO;
 import mnemosine.dto.account.StorageAccountCreateDTO;
 import mnemosine.dto.account.StorageAccountCreateRequestDTO;
-import mnemosine.dto.account.StorageAccountDTO;
 import mnemosine.dto.account.StorageAccountDeleteDTO;
 import mnemosine.dto.account.StorageAccountDeleteRequestDTO;
 import mnemosine.dto.account.StorageAccountInfoDTO;
 import mnemosine.dto.account.StorageAccountInfoRequestDTO;
 import mnemosine.dto.account.StorageAccountListDTO;
 import mnemosine.dto.account.StorageAccountListRequestDTO;
-import mnemosine.dto.group.ResourceGroupCreateDTO;
 import mnemosine.service.group.ResourceGroupService;
 import mnemosine.util.MnemosineUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,10 +99,11 @@ public class StorageAccountServiceImpl implements StorageAccountService {
 
         // Get all Storage Accounts in a Resource Group
         for (StorageAccount storageAccount: azure.storageAccounts().list())
-            storageAccountListDTO.addAccount(new StorageAccountDTO(
+            storageAccountListDTO.addAccount(new StorageAccountInfoDTO(
                     storageAccount.id(),
                     storageAccount.name(),
                     storageAccount.resourceGroupName(),
+                    storageAccount.creationTime().toString(),
                     storageAccount.regionName()));
 
         return mnemosineDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
@@ -129,10 +128,11 @@ public class StorageAccountServiceImpl implements StorageAccountService {
 
         // Get all Storage Accounts in a Resource Group
         for (StorageAccount storageAccount: azure.storageAccounts().listByResourceGroup(requestDTO.getGroupName()))
-            storageAccountListDTO.addAccount(new StorageAccountDTO(
+            storageAccountListDTO.addAccount(new StorageAccountInfoDTO(
                     storageAccount.id(),
                     storageAccount.name(),
                     storageAccount.resourceGroupName(),
+                    storageAccount.creationTime().toString(),
                     storageAccount.regionName()));
 
         return mnemosineDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
@@ -141,7 +141,60 @@ public class StorageAccountServiceImpl implements StorageAccountService {
 
     @Override
     public MnemosineDTO<StorageAccountInfoDTO> accountInfo(StorageAccountInfoRequestDTO requestDTO) {
-        return null;
+        // Build the response
+        MnemosineDTO<StorageAccountInfoDTO> storageAccountInfoDTO = new MnemosineDTO<>();
+
+        // Build azure
+        Azure azure = MnemosineUtil.buildAzure(
+                MnemosineUtil.buildCredentials(
+                        requestDTO.getClientId(),
+                        requestDTO.getTenantId(),
+                        requestDTO.getSecret()),
+                requestDTO.getSubscriptionId());
+
+        StorageAccount storageAccount = azure.storageAccounts()
+                .getByResourceGroup(requestDTO.getGroupName(), requestDTO.getAccountName());
+
+        if (storageAccount == null)
+            return storageAccountInfoDTO.error(MnemosineDTO.CODE, "Impossibile trovare lo storage account cercato");
+
+        return storageAccountInfoDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
+                .setData(new StorageAccountInfoDTO(
+                        storageAccount.id(),
+                        storageAccount.name(),
+                        storageAccount.resourceGroupName(),
+                        storageAccount.creationTime().toString(),
+                        storageAccount.regionName()));
+    }
+
+    @Override
+    public StorageAccount getStorageAccount(Azure azure, String groupName, String accountName) {
+        // Get the resource if it exists
+        // Else create it
+        ResourceGroup resourceGroup = resourceGroupService.getResourceGroup(azure, groupName);
+
+        return azure.storageAccounts()
+                .define(accountName)
+                .withRegion(Region.EUROPE_WEST)
+                .withExistingResourceGroup(resourceGroup.name())
+                .withSku(StorageAccountSkuType.STANDARD_LRS)
+                .create();
+    }
+
+    @Override
+    public String buildConnectionString(StorageAccount storageAccount) {
+        // Build the connection string
+        StringBuilder storageConnectionStringBuilder = new StringBuilder()
+                .append("DefaultEndpointsProtocol=https;")
+                .append("AccountName=")
+                .append(storageAccount.name())
+                .append(";")
+                .append("AccountKey=")
+                .append(storageAccount.getKeys().get(0).value())
+                .append(";")
+                .append("EndpointSuffix=core.windows.net");
+
+        return storageConnectionStringBuilder.toString();
     }
 
     @Autowired

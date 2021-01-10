@@ -5,6 +5,8 @@ import mnemosine.dto.account.StorageAccountCreateDTO;
 import mnemosine.dto.account.StorageAccountCreateRequestDTO;
 import mnemosine.dto.account.StorageAccountDeleteDTO;
 import mnemosine.dto.account.StorageAccountDeleteRequestDTO;
+import mnemosine.dto.account.StorageAccountInfoDTO;
+import mnemosine.dto.account.StorageAccountInfoRequestDTO;
 import mnemosine.dto.account.StorageAccountListDTO;
 import mnemosine.dto.account.StorageAccountListRequestDTO;
 import mnemosine.service.account.StorageAccountService;
@@ -31,7 +33,7 @@ public class StorageAccountController {
         return storageAccountService.delete(requestDTO);
     }
 
-    @GetMapping("/allAccounts")
+    @GetMapping("/all-accounts")
     public MnemosineDTO<StorageAccountListDTO> allAccounts(
             @RequestParam("client_id") String clientId,
             @RequestParam("tenant_id") String tenantId,
@@ -41,8 +43,8 @@ public class StorageAccountController {
                 new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, ""));
     }
 
-    @GetMapping("/accounts")
-    public MnemosineDTO<StorageAccountListDTO> accounts(
+    @GetMapping("/accounts-by-group")
+    public MnemosineDTO<StorageAccountListDTO> accountsByGroup(
             @RequestParam("client_id") String clientId,
             @RequestParam("tenant_id") String tenantId,
             @RequestParam("secret") String secret,
@@ -50,6 +52,18 @@ public class StorageAccountController {
             @RequestParam("group_name") String groupName) {
         return storageAccountService.listAccountsByResourceGroup(
                 new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, groupName));
+    }
+
+    @GetMapping("/info")
+    public MnemosineDTO<StorageAccountInfoDTO> info(
+            @RequestParam("client_id") String clientId,
+            @RequestParam("tenant_id") String tenantId,
+            @RequestParam("secret") String secret,
+            @RequestParam("subscription_id") String subscriptionId,
+            @RequestParam("group_name") String groupName,
+            @RequestParam("account_name") String accountName) {
+        return storageAccountService.accountInfo(
+                new StorageAccountInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName));
     }
 
     @Autowired

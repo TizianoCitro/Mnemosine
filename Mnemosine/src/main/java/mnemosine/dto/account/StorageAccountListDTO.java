@@ -3,7 +3,7 @@ package mnemosine.dto.account;
 import java.util.ArrayList;
 
 public class StorageAccountListDTO {
-    public StorageAccountListDTO(ArrayList<StorageAccountDTO> accounts) {
+    public StorageAccountListDTO(ArrayList<StorageAccountInfoDTO> accounts) {
         this.accounts = accounts;
     }
 
@@ -11,17 +11,17 @@ public class StorageAccountListDTO {
         accounts = new ArrayList<>();
     }
 
-    public void addAccount(StorageAccountDTO account) {
+    public void addAccount(StorageAccountInfoDTO account) {
         accounts.add(account);
     }
 
-    public ArrayList<StorageAccountDTO> getAccounts() {
+    public ArrayList<StorageAccountInfoDTO> getAccounts() {
         return accounts;
     }
 
-    public void setAccounts(ArrayList<StorageAccountDTO> accounts) {
+    public void setAccounts(ArrayList<StorageAccountInfoDTO> accounts) {
         this.accounts = accounts;
     }
 
-    private ArrayList<StorageAccountDTO> accounts;
+    private ArrayList<StorageAccountInfoDTO> accounts;
 }
