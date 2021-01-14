@@ -1,7 +1,7 @@
 package mnemosine.dto.blob;
 
-public class BlobUploadFromPathRequestDTO {
-    public BlobUploadFromPathRequestDTO(String clientId, String tenantId, String secret, String subscriptionId, String groupName, String accountName, String containerName, String filePath) {
+public class BlobRenameRequestDTO {
+    public BlobRenameRequestDTO(String clientId, String tenantId, String secret, String subscriptionId, String groupName, String accountName, String containerName, String blobOldName, String blobNewName) {
         this.clientId = clientId;
         this.tenantId = tenantId;
         this.secret = secret;
@@ -9,10 +9,11 @@ public class BlobUploadFromPathRequestDTO {
         this.groupName = groupName;
         this.accountName = accountName;
         this.containerName = containerName;
-        this.blobPath = filePath;
+        this.blobOldName = blobOldName;
+        this.blobNewName = blobNewName;
     }
 
-    public BlobUploadFromPathRequestDTO() {
+    public BlobRenameRequestDTO() {
     }
 
     public String getClientId() {
@@ -71,12 +72,20 @@ public class BlobUploadFromPathRequestDTO {
         this.containerName = containerName;
     }
 
-    public String getBlobPath() {
-        return blobPath;
+    public String getBlobOldName() {
+        return blobOldName;
     }
 
-    public void setBlobPath(String blobPath) {
-        this.blobPath = blobPath;
+    public void setBlobOldName(String blobOldName) {
+        this.blobOldName = blobOldName;
+    }
+
+    public String getBlobNewName() {
+        return blobNewName;
+    }
+
+    public void setBlobNewName(String blobNewName) {
+        this.blobNewName = blobNewName;
     }
 
     private String clientId;
@@ -86,5 +95,6 @@ public class BlobUploadFromPathRequestDTO {
     private String groupName;
     private String accountName;
     private String containerName;
-    private String blobPath;
+    private String blobOldName;
+    private String blobNewName;
 }

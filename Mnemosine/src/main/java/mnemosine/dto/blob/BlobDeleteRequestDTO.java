@@ -1,7 +1,7 @@
 package mnemosine.dto.blob;
 
-public class BlobUploadFromPathRequestDTO {
-    public BlobUploadFromPathRequestDTO(String clientId, String tenantId, String secret, String subscriptionId, String groupName, String accountName, String containerName, String filePath) {
+public class BlobDeleteRequestDTO {
+    public BlobDeleteRequestDTO(String clientId, String tenantId, String secret, String subscriptionId, String groupName, String accountName, String containerName, String fileName) {
         this.clientId = clientId;
         this.tenantId = tenantId;
         this.secret = secret;
@@ -9,10 +9,10 @@ public class BlobUploadFromPathRequestDTO {
         this.groupName = groupName;
         this.accountName = accountName;
         this.containerName = containerName;
-        this.blobPath = filePath;
+        this.blobName = fileName;
     }
 
-    public BlobUploadFromPathRequestDTO() {
+    public BlobDeleteRequestDTO() {
     }
 
     public String getClientId() {
@@ -71,12 +71,12 @@ public class BlobUploadFromPathRequestDTO {
         this.containerName = containerName;
     }
 
-    public String getBlobPath() {
-        return blobPath;
+    public String getBlobName() {
+        return blobName;
     }
 
-    public void setBlobPath(String blobPath) {
-        this.blobPath = blobPath;
+    public void setBlobName(String blobName) {
+        this.blobName = blobName;
     }
 
     private String clientId;
@@ -86,5 +86,5 @@ public class BlobUploadFromPathRequestDTO {
     private String groupName;
     private String accountName;
     private String containerName;
-    private String blobPath;
+    private String blobName;
 }
