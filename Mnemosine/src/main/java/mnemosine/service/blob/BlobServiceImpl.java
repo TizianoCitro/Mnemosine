@@ -2,27 +2,20 @@ package mnemosine.service.blob;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
-import com.azure.storage.blob.BlobServiceClient;
-import com.azure.storage.blob.BlobServiceClientBuilder;
 import com.azure.storage.blob.models.BlobItem;
 import com.azure.storage.blob.models.BlobProperties;
-import com.azure.storage.blob.models.UserDelegationKey;
-import com.azure.storage.blob.sas.BlobSasPermission;
-import com.azure.storage.blob.sas.BlobServiceSasSignatureValues;
 import com.microsoft.azure.management.Azure;
-import com.microsoft.azure.management.storage.StorageAccount;
 import mnemosine.dto.MnemosineDTO;
 import mnemosine.dto.blob.*;
-import mnemosine.service.account.StorageAccountService;
 import mnemosine.service.container.ContainerService;
 import mnemosine.util.MnemosineUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.time.OffsetDateTime;
 
 @Service
 public class BlobServiceImpl implements BlobService {
@@ -257,6 +250,36 @@ public class BlobServiceImpl implements BlobService {
 
         return mnemosineDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
                 .setData(buildBlobInfo(newBlobClient, newBlobClient.getProperties()));
+    }
+
+    @Override
+    public ByteArrayOutputStream download(BlobDownloadRequestDTO requestDTO) {
+        // Build azure
+        Azure azure = MnemosineUtil.buildAzure(
+                MnemosineUtil.buildCredentials(
+                        requestDTO.getClientId(),
+                        requestDTO.getTenantId(),
+                        requestDTO.getSecret()),
+                requestDTO.getSubscriptionId());
+
+        // Build the container
+        BlobContainerClient blobContainerClient = containerService.getContainer(
+                azure,
+                requestDTO.getGroupName(),
+                requestDTO.getAccountName(),
+                requestDTO.getContainerName());
+
+        // Get the BLOB
+        BlobClient blobClient = blobContainerClient.getBlobClient(requestDTO.getBlobName());
+        if (!blobClient.exists())
+            return null;
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        // Download the BLOB to a file
+        blobClient.download(byteArrayOutputStream);
+
+        return byteArrayOutputStream;
     }
 
     private boolean renameBlob(BlobClient oldBlobClient, BlobClient newBlobClient) {

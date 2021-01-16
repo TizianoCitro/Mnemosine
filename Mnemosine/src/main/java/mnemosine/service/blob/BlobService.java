@@ -3,6 +3,7 @@ package mnemosine.service.blob;
 import mnemosine.dto.MnemosineDTO;
 import mnemosine.dto.blob.*;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 
 public interface BlobService {
@@ -13,4 +14,6 @@ public interface BlobService {
     public MnemosineDTO<BlobInfoDTO> info(BlobInfoRequestDTO requestDTO);
     public MnemosineDTO<BlobInfoDTO> rename(BlobRenameRequestDTO requestDTO);
     public MnemosineDTO<BlobInfoDTO> copy(BlobCopyRequestDTO requestDTO);
+
+    public ByteArrayOutputStream download(BlobDownloadRequestDTO requestDTO);
 }
