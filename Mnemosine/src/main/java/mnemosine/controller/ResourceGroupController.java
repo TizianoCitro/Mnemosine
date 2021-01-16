@@ -19,17 +19,25 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.logging.Logger;
+
 @RestController
 @RequestMapping(value = "/group")
 public class ResourceGroupController {
 
+    Logger logger = Logger.getLogger(ResourceGroupController.class.getName());
+
     @PostMapping("/create")
     public MnemosineDTO<ResourceGroupCreateDTO> create(@RequestBody ResourceGroupCreateRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'group/create' per creare il gruppo: " + requestDTO.getGroupName());
+
         return resourceGroupService.create(requestDTO);
     }
 
     @DeleteMapping("/delete")
     public MnemosineDTO<ResourceGroupDeleteDTO> delete(@RequestBody ResourceGroupDeleteRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'group/delete' per eliminare il gruppo: " + requestDTO.getGroupName());
+
         return resourceGroupService.delete(requestDTO);
     }
 
@@ -39,6 +47,8 @@ public class ResourceGroupController {
             @RequestParam("tenant_id") String tenantId,
             @RequestParam("secret") String secret,
             @RequestParam("subscription_id") String subscriptionId) {
+        logger.info("Sono nel servizio 'group/groups'");
+
         return resourceGroupService.listGroups(
                 new ResourceGroupListRequestDTO(clientId, tenantId, secret, subscriptionId));
     }
@@ -50,6 +60,8 @@ public class ResourceGroupController {
             @RequestParam("secret") String secret,
             @RequestParam("subscription_id") String subscriptionId,
             @RequestParam("group_name") String groupName) {
+        logger.info("Sono nel servizio 'group/info' per info sul gruppo: " + groupName);
+
         return resourceGroupService.groupInfo(
                 new ResourceGroupInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName));
     }
