@@ -51,6 +51,8 @@ public class StorageAccountController {
             @RequestParam("tenant_id") String tenantId,
             @RequestParam("secret") String secret,
             @RequestParam("subscription_id") String subscriptionId) {
+        logger.info("Sono nel servizio 'account/all-accounts' per tutti gli account");
+
         return storageAccountService.listAccounts(
                 new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, ""));
     }
@@ -62,7 +64,7 @@ public class StorageAccountController {
             @RequestParam("secret") String secret,
             @RequestParam("subscription_id") String subscriptionId,
             @RequestParam("group_name") String groupName) {
-        logger.info("Sono nel servizio 'account/accounts-by-group' per gli accopunt nel gruppo: " + groupName);
+        logger.info("Sono nel servizio 'account/accounts-by-group' per gli account nel gruppo: " + groupName);
 
         return storageAccountService.listAccountsByResourceGroup(
                 new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, groupName));

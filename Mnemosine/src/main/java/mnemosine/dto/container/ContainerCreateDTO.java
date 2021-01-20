@@ -1,8 +1,8 @@
 package mnemosine.dto.container;
 
 public class ContainerCreateDTO {
-    public ContainerCreateDTO(String name, String accountName, String lastModifiedDate, String url) {
-        this.name = name;
+    public ContainerCreateDTO(String containerName, String accountName, String lastModifiedDate, String url) {
+        this.containerName = containerName;
         this.accountName = accountName;
         this.lastModifiedDate = lastModifiedDate;
         this.url = url;
@@ -12,11 +12,11 @@ public class ContainerCreateDTO {
     }
 
     public String getName() {
-        return name;
+        return containerName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String containerName) {
+        this.containerName = containerName;
     }
 
     public String getAccountName() {
@@ -43,7 +43,7 @@ public class ContainerCreateDTO {
         this.url = url;
     }
 
-    private String name;
+    private String containerName;
     private String accountName;
     private String lastModifiedDate;
     private String url;

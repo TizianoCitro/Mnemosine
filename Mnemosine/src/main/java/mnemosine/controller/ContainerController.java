@@ -19,17 +19,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.logging.Logger;
+
 @RestController
 @RequestMapping(value = "/container")
 public class ContainerController {
 
+    Logger logger = Logger.getLogger(ContainerController.class.getName());
+
     @PostMapping("/create")
     public MnemosineDTO<ContainerCreateDTO> create(@RequestBody ContainerCreateRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'container/create'"
+                + " per creare il container: " + requestDTO.getContainerName()
+                + " nell'account: " + requestDTO.getAccountName()
+                + " nel gruppo: " + requestDTO.getGroupName());
+
         return containerService.create(requestDTO);
     }
 
     @DeleteMapping("/delete")
     public MnemosineDTO<ContainerDeleteDTO> delete(@RequestBody ContainerDeleteRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'container/delete'"
+                + " per cancellare il container: " + requestDTO.getContainerName()
+                + " nell'account: " + requestDTO.getAccountName()
+                + " nel gruppo: " + requestDTO.getGroupName());
+
         return containerService.delete(requestDTO);
     }
 
@@ -41,6 +55,8 @@ public class ContainerController {
             @RequestParam("subscription_id") String subscriptionId,
             @RequestParam("group_name") String groupName,
             @RequestParam("account_name") String accountName) {
+        logger.info("Sono nel servizio 'container/containers-by-account' per i container nell'account: " + accountName);
+
         return containerService.listContainersByStorageAccount(
                 new ContainerListRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName));
     }
@@ -54,6 +70,11 @@ public class ContainerController {
             @RequestParam("group_name") String groupName,
             @RequestParam("account_name") String accountName,
             @RequestParam("container_name") String containerName) {
+        logger.info("Sono nel servizio 'container/info'"
+                + " per info sul container: " + containerName
+                + " nell'account: " + accountName
+                + " nel gruppo: " + groupName);
+
         return containerService.info(
                 new ContainerInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName, containerName));
     }

@@ -1,29 +1,29 @@
 package mnemosine.dto.container;
 
 public class ContainerInfoDTO {
-    public ContainerInfoDTO(String name, String account, String lastModifiedDate) {
-        this.name = name;
-        this.account = account;
+    public ContainerInfoDTO(String containerName, String accountName, String lastModifiedDate) {
+        this.containerName = containerName;
+        this.accountName = accountName;
         this.lastModifiedDate = lastModifiedDate;
     }
 
     public ContainerInfoDTO() {
     }
 
-    public String getName() {
-        return name;
+    public String getContainerName() {
+        return containerName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setContainerName(String containerName) {
+        this.containerName = containerName;
     }
 
-    public String getAccount() {
-        return account;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
     public String getLastModifiedDate() {
@@ -34,7 +34,7 @@ public class ContainerInfoDTO {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    private String name;
-    private String account;
+    private String containerName;
+    private String accountName;
     private String lastModifiedDate;
 }
