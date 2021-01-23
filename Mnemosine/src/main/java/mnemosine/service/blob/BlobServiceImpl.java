@@ -12,6 +12,7 @@ import mnemosine.util.MnemosineUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,6 +20,36 @@ import java.io.FileNotFoundException;
 
 @Service
 public class BlobServiceImpl implements BlobService {
+
+    @Override
+    public MnemosineDTO<BlobUploadDTO> upload(BlobUploadRequestDTO requestDTO) {
+        // Build the request
+        MnemosineDTO<BlobUploadDTO> blobUploadDTO = new MnemosineDTO<>();
+
+        // Build azure
+        Azure azure = MnemosineUtil.buildAzure(
+                MnemosineUtil.buildCredentials(
+                        requestDTO.getClientId(),
+                        requestDTO.getTenantId(),
+                        requestDTO.getSecret()),
+                requestDTO.getSubscriptionId());
+
+        // Build the container
+        BlobContainerClient blobContainerClient = containerService.getContainer(
+                azure,
+                requestDTO.getGroupName(),
+                requestDTO.getAccountName(),
+                requestDTO.getContainerName());
+
+        // Build Blob Client
+        BlobClient blobClient = blobContainerClient.getBlobClient(requestDTO.getFileName());
+
+        // Upload the BLOB from Byte array
+        blobClient.upload(new ByteArrayInputStream(requestDTO.getFileBytes()), requestDTO.getFileBytes().length, true);
+
+        return blobUploadDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
+                .setData(new BlobUploadDTO(true));
+    }
 
     @Override
     public MnemosineDTO<BlobUploadDTO> uploadFromFilePath(BlobUploadFromPathRequestDTO requestDTO) throws FileNotFoundException {
@@ -47,7 +78,7 @@ public class BlobServiceImpl implements BlobService {
         BlobClient blobClient = blobContainerClient.getBlobClient(file.getName());
 
         // Upload the file
-        blobClient.upload(new FileInputStream(file), file.length());
+        blobClient.upload(new FileInputStream(file), file.length(), true);
 
         return blobUploadDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
                 .setData(new BlobUploadDTO(true));

@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 
 public interface BlobService {
+    public MnemosineDTO<BlobUploadDTO> upload(BlobUploadRequestDTO requestDTO);
     public MnemosineDTO<BlobUploadDTO> uploadFromFilePath(BlobUploadFromPathRequestDTO requestDTO) throws FileNotFoundException;
     public MnemosineDTO<BlobDeleteDTO> delete(BlobDeleteRequestDTO requestDTO);
     public MnemosineDTO<BlobDownloadDTO> downloadToFile(BlobDownloadToFileRequestDTO requestDTO);

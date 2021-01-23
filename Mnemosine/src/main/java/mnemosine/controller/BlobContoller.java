@@ -15,15 +15,56 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(value = "/blob")
 public class BlobContoller {
 
+    Logger logger = Logger.getLogger(BlobContoller.class.getName());
+
+    @PostMapping("/upload")
+    public MnemosineDTO<BlobUploadDTO> upload(
+            @RequestParam("client_id") String clientId,
+            @RequestParam("tenant_id") String tenantId,
+            @RequestParam("secret") String secret,
+            @RequestParam("subscription_id") String subscriptionId,
+            @RequestParam("group_name") String groupName,
+            @RequestParam("account_name") String accountName,
+            @RequestParam("container_name") String containerName,
+            @RequestParam("file_to_upload") MultipartFile file) {
+        logger.info("Sono nel servizio 'blob/upload'"
+                + " per caricare il BLOB: " + file.getOriginalFilename() + " o anche " + file.getName()
+                + " nel container: " + containerName
+                + " nell'account: " + accountName
+                + " nel gruppo: " + groupName);
+
+        try {
+            byte[] fileBytes = file.getBytes();
+            String fileName = file.getOriginalFilename();
+
+            return blobService.upload(
+                    new BlobUploadRequestDTO(clientId, tenantId, secret, subscriptionId,
+                            groupName, accountName, containerName, fileName, fileBytes));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<BlobUploadDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE)
+                    .setData(new BlobUploadDTO(false));
+        }
+    }
+
     @PostMapping("/upload-from-path")
     public MnemosineDTO<BlobUploadDTO> uploadFromPath(@RequestBody BlobUploadFromPathRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'blob/upload-from-path'"
+                + " per creare il BLOB: " + requestDTO.getBlobPath()
+                + " nel container: " + requestDTO.getContainerName()
+                + " nell'account: " + requestDTO.getAccountName()
+                + " nel gruppo: " + requestDTO.getGroupName());
+
         try {
             return blobService.uploadFromFilePath(requestDTO);
         } catch (Exception e) {
@@ -36,16 +77,34 @@ public class BlobContoller {
 
     @PostMapping("/copy")
     public MnemosineDTO<BlobInfoDTO> copy(@RequestBody BlobCopyRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'blob/delete'"
+                + " per copiare il BLOB: " + requestDTO.getBlobName()
+                + " nel container: " + requestDTO.getContainerName()
+                + " nell'account: " + requestDTO.getAccountName()
+                + " nel gruppo: " + requestDTO.getGroupName());
+
         return blobService.copy(requestDTO);
     }
 
     @DeleteMapping("/delete")
     public MnemosineDTO<BlobDeleteDTO> delete(@RequestBody BlobDeleteRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'blob/delete'"
+                + " per eliminare il BLOB: " + requestDTO.getBlobName()
+                + " nel container: " + requestDTO.getContainerName()
+                + " nell'account: " + requestDTO.getAccountName()
+                + " nel gruppo: " + requestDTO.getGroupName());
+
         return blobService.delete(requestDTO);
     }
 
     @PutMapping("/rename")
     public MnemosineDTO<BlobInfoDTO> rename(@RequestBody BlobRenameRequestDTO requestDTO) {
+        logger.info("Sono nel servizio 'blob/delete'"
+                + " per rinominare il BLOB: " + requestDTO.getBlobOldName() + " in " + requestDTO.getBlobNewName()
+                + " nel container: " + requestDTO.getContainerName()
+                + " nell'account: " + requestDTO.getAccountName()
+                + " nel gruppo: " + requestDTO.getGroupName());
+
         return blobService.rename(requestDTO);
     }
 
@@ -75,6 +134,11 @@ public class BlobContoller {
             @RequestParam("account_name") String accountName,
             @RequestParam("container_name") String containerName,
             @RequestParam("blob_name") String blobName) {
+        logger.info("Sono nel servizio 'blob/download'"
+                + " per scaricare il BLOB: " + blobName
+                + " nel container: " + containerName
+                + " nell'account: " + accountName
+                + " nel gruppo: " + groupName);
 
         // Get the file to download
         ByteArrayOutputStream byteArrayOutputStream = blobService.download(
@@ -100,6 +164,8 @@ public class BlobContoller {
             @RequestParam("group_name") String groupName,
             @RequestParam("account_name") String accountName,
             @RequestParam("container_name") String containerName) {
+        logger.info("Sono nel servizio 'blob/blobs' per i BLOB nel container: " + containerName);
+
         return blobService.listBlobs(new BlobListRequestDTO(clientId, tenantId, secret, subscriptionId,
                 groupName, accountName, containerName));
     }
@@ -114,6 +180,12 @@ public class BlobContoller {
             @RequestParam("account_name") String accountName,
             @RequestParam("container_name") String containerName,
             @RequestParam("blob_name") String blobName) {
+        logger.info("Sono nel servizio 'blob/info'"
+                + " per info sul BLOB: " + blobName
+                + " nel container: " + containerName
+                + " nell'account: " + accountName
+                + " nel gruppo: " + groupName);
+
         return blobService.info(
                 new BlobInfoRequestDTO(clientId, tenantId, secret, subscriptionId,
                         groupName, accountName, containerName, blobName));
