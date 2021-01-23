@@ -9,6 +9,7 @@ import mnemosine.dto.account.StorageAccountInfoDTO;
 import mnemosine.dto.account.StorageAccountInfoRequestDTO;
 import mnemosine.dto.account.StorageAccountListDTO;
 import mnemosine.dto.account.StorageAccountListRequestDTO;
+import mnemosine.dto.group.ResourceGroupInfoDTO;
 import mnemosine.service.account.StorageAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,7 +34,13 @@ public class StorageAccountController {
                 + " per creare l'account: " + requestDTO.getAccountName()
                 + " nel gruppo: " + requestDTO.getGroupName());
 
-        return storageAccountService.create(requestDTO);
+        try {
+            return storageAccountService.create(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<StorageAccountCreateDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @DeleteMapping("/delete")
@@ -42,7 +49,13 @@ public class StorageAccountController {
                 + " per eliminare l'account: " + requestDTO.getAccountName()
                 + " nel gruppo: " + requestDTO.getGroupName());
 
-        return storageAccountService.delete(requestDTO);
+        try {
+            return storageAccountService.delete(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<StorageAccountDeleteDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/all-accounts")
@@ -53,8 +66,14 @@ public class StorageAccountController {
             @RequestParam("subscription_id") String subscriptionId) {
         logger.info("Sono nel servizio 'account/all-accounts' per tutti gli account");
 
-        return storageAccountService.listAccounts(
-                new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, ""));
+        try {
+            return storageAccountService.listAccounts(
+                    new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, ""));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<StorageAccountListDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/accounts-by-group")
@@ -66,8 +85,14 @@ public class StorageAccountController {
             @RequestParam("group_name") String groupName) {
         logger.info("Sono nel servizio 'account/accounts-by-group' per gli account nel gruppo: " + groupName);
 
-        return storageAccountService.listAccountsByResourceGroup(
-                new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, groupName));
+        try {
+            return storageAccountService.listAccountsByResourceGroup(
+                    new StorageAccountListRequestDTO(clientId, tenantId, secret, subscriptionId, groupName));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<StorageAccountListDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/info")
@@ -82,8 +107,14 @@ public class StorageAccountController {
                 + " per info sull'accopunt: " + accountName
                 + " nel gruppo: " + groupName);
 
-        return storageAccountService.accountInfo(
-                new StorageAccountInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName));
+        try {
+            return storageAccountService.accountInfo(
+                    new StorageAccountInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<StorageAccountInfoDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @Autowired

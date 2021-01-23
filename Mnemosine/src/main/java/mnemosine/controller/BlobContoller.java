@@ -83,7 +83,13 @@ public class BlobContoller {
                 + " nell'account: " + requestDTO.getAccountName()
                 + " nel gruppo: " + requestDTO.getGroupName());
 
-        return blobService.copy(requestDTO);
+        try {
+            return blobService.copy(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<BlobInfoDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @DeleteMapping("/delete")
@@ -94,7 +100,13 @@ public class BlobContoller {
                 + " nell'account: " + requestDTO.getAccountName()
                 + " nel gruppo: " + requestDTO.getGroupName());
 
-        return blobService.delete(requestDTO);
+        try {
+            return blobService.delete(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<BlobDeleteDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @PutMapping("/rename")
@@ -105,7 +117,13 @@ public class BlobContoller {
                 + " nell'account: " + requestDTO.getAccountName()
                 + " nel gruppo: " + requestDTO.getGroupName());
 
-        return blobService.rename(requestDTO);
+        try {
+            return blobService.rename(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<BlobInfoDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/download-to-file")
@@ -119,9 +137,15 @@ public class BlobContoller {
             @RequestParam("container_name") String containerName,
             @RequestParam("blob_name") String blobName,
             @RequestParam("download_path") String downloadPath) {
-        return blobService.downloadToFile(
-                new BlobDownloadToFileRequestDTO(clientId, tenantId, secret, subscriptionId,
-                        groupName, accountName, containerName, blobName, downloadPath));
+        try {
+            return blobService.downloadToFile(
+                    new BlobDownloadToFileRequestDTO(clientId, tenantId, secret, subscriptionId,
+                            groupName, accountName, containerName, blobName, downloadPath));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<BlobDownloadDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/download")
@@ -166,8 +190,14 @@ public class BlobContoller {
             @RequestParam("container_name") String containerName) {
         logger.info("Sono nel servizio 'blob/blobs' per i BLOB nel container: " + containerName);
 
-        return blobService.listBlobs(new BlobListRequestDTO(clientId, tenantId, secret, subscriptionId,
-                groupName, accountName, containerName));
+        try {
+            return blobService.listBlobs(new BlobListRequestDTO(clientId, tenantId, secret, subscriptionId,
+                    groupName, accountName, containerName));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<BlobListDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/info")
@@ -186,9 +216,15 @@ public class BlobContoller {
                 + " nell'account: " + accountName
                 + " nel gruppo: " + groupName);
 
-        return blobService.info(
-                new BlobInfoRequestDTO(clientId, tenantId, secret, subscriptionId,
-                        groupName, accountName, containerName, blobName));
+        try {
+            return blobService.info(
+                    new BlobInfoRequestDTO(clientId, tenantId, secret, subscriptionId,
+                            groupName, accountName, containerName, blobName));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<BlobInfoDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @Autowired

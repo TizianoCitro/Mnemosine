@@ -1,6 +1,7 @@
 package mnemosine.controller;
 
 import mnemosine.dto.MnemosineDTO;
+import mnemosine.dto.blob.BlobUploadDTO;
 import mnemosine.dto.container.ContainerCreateDTO;
 import mnemosine.dto.container.ContainerCreateRequestDTO;
 import mnemosine.dto.container.ContainerDeleteDTO;
@@ -34,7 +35,13 @@ public class ContainerController {
                 + " nell'account: " + requestDTO.getAccountName()
                 + " nel gruppo: " + requestDTO.getGroupName());
 
-        return containerService.create(requestDTO);
+        try {
+            return containerService.create(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ContainerCreateDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @DeleteMapping("/delete")
@@ -44,7 +51,13 @@ public class ContainerController {
                 + " nell'account: " + requestDTO.getAccountName()
                 + " nel gruppo: " + requestDTO.getGroupName());
 
-        return containerService.delete(requestDTO);
+        try {
+            return containerService.delete(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ContainerDeleteDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/containers-by-account")
@@ -57,8 +70,14 @@ public class ContainerController {
             @RequestParam("account_name") String accountName) {
         logger.info("Sono nel servizio 'container/containers-by-account' per i container nell'account: " + accountName);
 
-        return containerService.listContainersByStorageAccount(
-                new ContainerListRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName));
+        try {
+            return containerService.listContainersByStorageAccount(
+                    new ContainerListRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ContainerListDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/info")
@@ -75,8 +94,14 @@ public class ContainerController {
                 + " nell'account: " + accountName
                 + " nel gruppo: " + groupName);
 
-        return containerService.info(
-                new ContainerInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName, containerName));
+        try {
+            return containerService.info(
+                    new ContainerInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName, accountName, containerName));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ContainerInfoDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @Autowired

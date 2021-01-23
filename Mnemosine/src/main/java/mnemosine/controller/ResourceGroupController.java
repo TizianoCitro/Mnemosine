@@ -31,14 +31,26 @@ public class ResourceGroupController {
     public MnemosineDTO<ResourceGroupCreateDTO> create(@RequestBody ResourceGroupCreateRequestDTO requestDTO) {
         logger.info("Sono nel servizio 'group/create' per creare il gruppo: " + requestDTO.getGroupName());
 
-        return resourceGroupService.create(requestDTO);
+        try {
+            return resourceGroupService.create(requestDTO);
+        } catch(Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ResourceGroupCreateDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @DeleteMapping("/delete")
     public MnemosineDTO<ResourceGroupDeleteDTO> delete(@RequestBody ResourceGroupDeleteRequestDTO requestDTO) {
         logger.info("Sono nel servizio 'group/delete' per eliminare il gruppo: " + requestDTO.getGroupName());
 
-        return resourceGroupService.delete(requestDTO);
+        try {
+            return resourceGroupService.delete(requestDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ResourceGroupDeleteDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/groups")
@@ -49,8 +61,14 @@ public class ResourceGroupController {
             @RequestParam("subscription_id") String subscriptionId) {
         logger.info("Sono nel servizio 'group/groups'");
 
-        return resourceGroupService.listGroups(
-                new ResourceGroupListRequestDTO(clientId, tenantId, secret, subscriptionId));
+        try {
+            return resourceGroupService.listGroups(
+                    new ResourceGroupListRequestDTO(clientId, tenantId, secret, subscriptionId));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ResourceGroupListDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @GetMapping("/info")
@@ -62,8 +80,14 @@ public class ResourceGroupController {
             @RequestParam("group_name") String groupName) {
         logger.info("Sono nel servizio 'group/info' per info sul gruppo: " + groupName);
 
-        return resourceGroupService.groupInfo(
-                new ResourceGroupInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName));
+        try {
+            return resourceGroupService.groupInfo(
+                    new ResourceGroupInfoRequestDTO(clientId, tenantId, secret, subscriptionId, groupName));
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            return new MnemosineDTO<ResourceGroupInfoDTO>().error(MnemosineDTO.CODE, MnemosineDTO.FAIL_MESSAGE);
+        }
     }
 
     @Autowired
