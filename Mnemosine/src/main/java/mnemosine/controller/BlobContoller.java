@@ -3,6 +3,7 @@ package mnemosine.controller;
 import mnemosine.dto.MnemosineDTO;
 import mnemosine.dto.blob.*;
 import mnemosine.service.blob.BlobService;
+import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -111,7 +112,7 @@ public class BlobContoller {
 
     @PutMapping("/rename")
     public MnemosineDTO<BlobInfoDTO> rename(@RequestBody BlobRenameRequestDTO requestDTO) {
-        logger.info("Sono nel servizio 'blob/delete'"
+        logger.info("Sono nel servizio 'blob/rename'"
                 + " per rinominare il BLOB: " + requestDTO.getBlobOldName() + " in " + requestDTO.getBlobNewName()
                 + " nel container: " + requestDTO.getContainerName()
                 + " nell'account: " + requestDTO.getAccountName()

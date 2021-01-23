@@ -239,7 +239,14 @@ public class BlobServiceImpl implements BlobService {
             return mnemosineDTO.error(MnemosineDTO.CODE, "Impossibile trovare il BLOB da rinominare");
 
         // Get the BLOB with the new name
-        BlobClient newBlobClient = blobContainerClient.getBlobClient(requestDTO.getBlobNewName());
+        String newBlobName = requestDTO.getBlobNewName();
+        if(!newBlobName.contains(".")) {
+            String fileFormat = requestDTO.getBlobOldName().substring(requestDTO.getBlobOldName().lastIndexOf("."));
+
+            newBlobName += fileFormat;
+        }
+
+        BlobClient newBlobClient = blobContainerClient.getBlobClient(newBlobName);
 
         // Rename the BLOB
         if (!renameBlob(oldBlobClient, newBlobClient))
@@ -314,25 +321,33 @@ public class BlobServiceImpl implements BlobService {
     }
 
     private boolean renameBlob(BlobClient oldBlobClient, BlobClient newBlobClient) {
-        // Copy the BLOB with the old name into one with the new name
-        copyBlob(oldBlobClient, newBlobClient);
+        try {
+            // Copy the BLOB with the old name into one with the new name
+            copyBlob(oldBlobClient, newBlobClient);
 
-        // Delete the old BLOB
-        oldBlobClient.delete();
+            // Delete the old BLOB
+            oldBlobClient.delete();
 
-        // Check if the BLOB was correctly deleted
-        if (oldBlobClient.exists()) {
+            // Check if the BLOB was correctly deleted
+            if (oldBlobClient.exists()) {
 
-            // Else delete the new one
-            if (newBlobClient.exists())
-                newBlobClient.delete();
+                // Else delete the new one
+                if (newBlobClient.exists())
+                    newBlobClient.delete();
+
+                return false;
+            }
+
+            clearCopy(oldBlobClient);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            clearCopy(oldBlobClient);
 
             return false;
         }
-
-        clearCopy(oldBlobClient);
-
-        return true;
     }
 
     private void copyBlob(BlobClient oldBlobClient, BlobClient newBlobClient) {
@@ -360,7 +375,7 @@ public class BlobServiceImpl implements BlobService {
         while (!isNameAvailable) {
             String copyName = blobClient.getBlobName();
             if (copyName.contains("."))
-                copyName = copyName.substring(0, copyName.lastIndexOf(".")) + suffix;
+                copyName = copyName.substring(0, copyName.lastIndexOf(".")) + "_" + suffix;
 
             // Get the BLOB with the new name
             copyBlobClient = blobContainerClient.getBlobClient(copyName + type);
