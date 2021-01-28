@@ -284,7 +284,7 @@ public class BlobServiceImpl implements BlobService {
         BlobClient newBlobClient = buildCopyBlobClient(oldBlobClient, blobContainerClient);
 
         copyBlob(oldBlobClient, newBlobClient);
-        clearCopy(oldBlobClient);
+        // clearCopy(oldBlobClient);
 
         return mnemosineDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
                 .setData(buildBlobInfo(newBlobClient, newBlobClient.getProperties()));
@@ -338,30 +338,28 @@ public class BlobServiceImpl implements BlobService {
                 return false;
             }
 
-            clearCopy(oldBlobClient);
+            // clearCopy(oldBlobClient);
 
             return true;
         } catch (Exception e) {
             e.printStackTrace();
 
-            clearCopy(oldBlobClient);
+            // clearCopy(oldBlobClient);
 
             return false;
         }
     }
 
     private void copyBlob(BlobClient oldBlobClient, BlobClient newBlobClient) {
-        // Save the file for a moment
-        oldBlobClient.downloadToFile(MNEMOSINE_TEMP_PATH + oldBlobClient.getBlobName(), true);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        // Upload the new file
-        newBlobClient.uploadFromFile(MNEMOSINE_TEMP_PATH + oldBlobClient.getBlobName());
-    }
+        // Download the BLOB to a file
+        oldBlobClient.download(byteArrayOutputStream);
 
-    private void clearCopy(BlobClient blobClient) {
-        // Delete temp file
-        File fileToDelete = new File(MNEMOSINE_TEMP_PATH + blobClient.getBlobName());
-        fileToDelete.delete();
+        byte[] fileBytes = byteArrayOutputStream.toByteArray();
+
+        // Upload the BLOB from Byte array
+        newBlobClient.upload(new ByteArrayInputStream(fileBytes), fileBytes.length, true);
     }
 
     private BlobClient buildCopyBlobClient(BlobClient blobClient, BlobContainerClient blobContainerClient) {
