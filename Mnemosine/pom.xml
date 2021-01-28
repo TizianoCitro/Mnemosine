@@ -6,11 +6,11 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>2.3.8.BUILD-SNAPSHOT</version>
-		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>mnemosine</groupId>
 	<artifactId>Mnemosine</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1</version>
+	<packaging>war</packaging>
 	<name>mnemosine</name>
 	<description>Spring Boot project for Mnemosine microservice</description>
 
@@ -24,9 +24,16 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.microsoft.azure</groupId>
 			<artifactId>azure-spring-boot-starter</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
@@ -80,6 +87,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>mnemosine</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
