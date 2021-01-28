@@ -277,6 +277,8 @@ public class BlobServiceImpl implements BlobService {
         }
 
         BlobClient newBlobClient = blobContainerClient.getBlobClient(newBlobName);
+        if (newBlobClient.exists())
+            return mnemosineDTO.error(MnemosineDTO.CODE, "File con nome " + newBlobName + " già presente");
 
         // Rename the BLOB
         if (!renameBlob(oldBlobClient, newBlobClient))
