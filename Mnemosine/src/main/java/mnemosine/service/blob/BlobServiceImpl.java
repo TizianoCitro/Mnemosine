@@ -118,6 +118,36 @@ public class BlobServiceImpl implements BlobService {
     }
 
     @Override
+    public ByteArrayOutputStream download(BlobDownloadRequestDTO requestDTO) {
+        // Build azure
+        Azure azure = MnemosineUtil.buildAzure(
+                MnemosineUtil.buildCredentials(
+                        requestDTO.getClientId(),
+                        requestDTO.getTenantId(),
+                        requestDTO.getSecret()),
+                requestDTO.getSubscriptionId());
+
+        // Build the container
+        BlobContainerClient blobContainerClient = containerService.getContainer(
+                azure,
+                requestDTO.getGroupName(),
+                requestDTO.getAccountName(),
+                requestDTO.getContainerName());
+
+        // Get the BLOB
+        BlobClient blobClient = blobContainerClient.getBlobClient(requestDTO.getBlobName());
+        if (!blobClient.exists())
+            return null;
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+
+        // Download the BLOB to a file
+        blobClient.download(byteArrayOutputStream);
+
+        return byteArrayOutputStream;
+    }
+
+    @Override
     public MnemosineDTO<BlobDownloadDTO> downloadToFile(BlobDownloadToFileRequestDTO requestDTO) {
         // Build the response
         MnemosineDTO<BlobDownloadDTO> blobDownloadDTO = new MnemosineDTO<>();
@@ -284,40 +314,9 @@ public class BlobServiceImpl implements BlobService {
         BlobClient newBlobClient = buildCopyBlobClient(oldBlobClient, blobContainerClient);
 
         copyBlob(oldBlobClient, newBlobClient);
-        // clearCopy(oldBlobClient);
 
         return mnemosineDTO.success(MnemosineDTO.CODE, MnemosineDTO.SUCCES_MESSAGE)
                 .setData(buildBlobInfo(newBlobClient, newBlobClient.getProperties()));
-    }
-
-    @Override
-    public ByteArrayOutputStream download(BlobDownloadRequestDTO requestDTO) {
-        // Build azure
-        Azure azure = MnemosineUtil.buildAzure(
-                MnemosineUtil.buildCredentials(
-                        requestDTO.getClientId(),
-                        requestDTO.getTenantId(),
-                        requestDTO.getSecret()),
-                requestDTO.getSubscriptionId());
-
-        // Build the container
-        BlobContainerClient blobContainerClient = containerService.getContainer(
-                azure,
-                requestDTO.getGroupName(),
-                requestDTO.getAccountName(),
-                requestDTO.getContainerName());
-
-        // Get the BLOB
-        BlobClient blobClient = blobContainerClient.getBlobClient(requestDTO.getBlobName());
-        if (!blobClient.exists())
-            return null;
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-        // Download the BLOB to a file
-        blobClient.download(byteArrayOutputStream);
-
-        return byteArrayOutputStream;
     }
 
     private boolean renameBlob(BlobClient oldBlobClient, BlobClient newBlobClient) {
@@ -338,13 +337,9 @@ public class BlobServiceImpl implements BlobService {
                 return false;
             }
 
-            // clearCopy(oldBlobClient);
-
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-
-            // clearCopy(oldBlobClient);
 
             return false;
         }
@@ -353,7 +348,6 @@ public class BlobServiceImpl implements BlobService {
     private void copyBlob(BlobClient oldBlobClient, BlobClient newBlobClient) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        // Download the BLOB to a file
         oldBlobClient.download(byteArrayOutputStream);
 
         byte[] fileBytes = byteArrayOutputStream.toByteArray();
@@ -400,6 +394,4 @@ public class BlobServiceImpl implements BlobService {
 
     @Autowired
     private ContainerService containerService;
-
-    private static final String MNEMOSINE_TEMP_PATH = "./src/main/resources/temp/";
 }
